@@ -1,0 +1,37 @@
+package Entities;
+
+import java.util.LinkedList;
+
+public class AllRoutesTraveller extends Traveller{
+    public AllRoutesTraveller(String name, String uniqueCode, String city) {
+        super(name, uniqueCode, city);
+    }
+
+    @Override
+    public boolean canTravel(String toCity) {
+        Manager manager=Manager.getInst();
+        return manager.canReach(this.city,toCity);
+    }
+
+    public String getRecommendations(){
+        LinkedList<Destination> recomm=new LinkedList<Destination>();
+        Manager manager=Manager.getInst();
+        for(Destination dest: manager.cities){
+            if(this.canTravel(dest.getName())==true){
+                recomm.add(dest);
+            }
+        }
+
+        recomm.sort((o1, o2) -> -(Integer.compare(o1.getPopularity(),o2.getPopularity())));
+
+        String res="";
+        for(Destination dest:recomm){
+            res+=dest+"\n";
+        }
+        if(res.length()<2){
+            res="No recommendations\n";
+        }
+
+        return res;
+    }
+}
